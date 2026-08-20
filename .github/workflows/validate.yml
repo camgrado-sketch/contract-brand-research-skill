@@ -1,0 +1,31 @@
+name: Validate Skill Repository
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate repository structure
+        run: python3 scripts/validate_repo.py
+
+      - name: Compile Python helpers
+        run: python3 -m py_compile scripts/validate_repo.py skills/contract-brand-research/scripts/audit_knowledge_links.py
+
+      - name: Check shell helper syntax
+        run: bash -n skills/contract-brand-research/scripts/extract_official_pdf.sh

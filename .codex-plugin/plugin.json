@@ -1,0 +1,18 @@
+{
+  "name": "contract-brand-research",
+  "version": "0.1.0",
+  "description": "Evidence-backed competitor brand research for contract furniture and B2B design, from intent alignment through optional knowledge-base PR.",
+  "repository": "https://github.com/camgrado-sketch/contract-brand-research-skill",
+  "license": "MIT",
+  "keywords": ["competitor-research", "contract-furniture", "brand-strategy", "evidence"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Contract Brand Research",
+    "shortDescription": "Evidence-backed competitor research for contract furniture.",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "Use Contract Brand Research to analyze why a contract furniture brand can sustain a premium price at scale."
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+# Copy to config.yaml for a private local configuration. Do not commit config.yaml.
+# Keep the shared Skill method neutral; place organization-specific paths and strategy here.
+
+self_brand:
+  name: ""
+  positioning: ""
+  strategic_questions: []
+
+benchmark_brands: []
+
+research:
+  default_geography: "global"
+  official_top_up_page_limit: 5
+  require_alignment_confirmation: true
+  source_priority: ["A", "B", "C"]
+
+knowledge_sync:
+  enabled: false
+  repository: ""
+  integration_branch: "develop"
+  review_branch_prefix: "note/"
+  formal_note_path: ""
+  research_note_path: ""
+  index_path: ""
+  card_mapping:
+    positioning_card: ""
+    expression_card: ""
+    evidence_card: ""
+
+review:
+  require_user_mapping_confirmation: true
+  require_pull_request: true
+  pr_base_branch: "develop"
