@@ -1,5 +1,6 @@
-# Copy to config.yaml for a private local configuration. Do not commit config.yaml.
-# Keep the shared Skill method neutral; place organization-specific paths and strategy here.
+# Field schema only. This file is packaged with the Skill and is not a required runtime config.
+# A private configuration may be supplied explicitly by the user or via SKILL_CONFIG_PATH.
+# Do not copy secrets, client data, or proprietary research into a shared configuration.
 
 self_brand:
   name: ""

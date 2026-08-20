@@ -31,8 +31,9 @@ The workflow was designed for questions such as: *Why can a contract furniture b
 ├── .claude-plugin/                  # Claude Code plugin manifest
 ├── AGENTS.md                        # Repository-wide agent collaboration rules
 ├── CLAUDE.md                        # Thin Claude Code pointer to AGENTS.md
-├── config.example.yaml              # Private-context configuration schema
-└── .env                             # Non-secret environment variable template
+├── .env                             # Non-secret environment variable template
+└── skills/contract-brand-research/references/config.example.yaml
+                                      # Packaged field schema for optional private configuration
 ```
 
 ## Installation
@@ -43,7 +44,7 @@ Import or copy `skills/contract-brand-research/` as a Skill. Keep `SKILL.md` tog
 
 ### Codex
 
-Use the repository as a Skill-only Plugin. Codex recognizes the manifest at `.codex-plugin/plugin.json`, which points to `./skills/`. For repo-scoped development, expose the shared Skill under `.agents/skills/` with a symlink rather than creating a second copy. See the [Codex Skills documentation](https://developers.openai.com/codex/skills).
+Install through a supported Codex or ChatGPT Plugin workflow, such as a local Marketplace source or a supported plugin upload path. The manifest at `.codex-plugin/plugin.json` is the package entry point, but its presence in a cloned repository does **not** mean the plugin is installed. For standalone use, preserve the complete `skills/contract-brand-research/` directory, including `SKILL.md`, `references/`, `templates/`, and `scripts/`; copying `SKILL.md` alone is insufficient. After installation, start a new session and test both an explicit invocation and a natural-language competitor-research request. IDE support changes over time and should be checked against the current [Codex Skills documentation](https://developers.openai.com/codex/skills).
 
 ### Claude Code
 
@@ -51,7 +52,7 @@ Test with the repository directory as a local plugin, or install it through a Cl
 
 ## Configuration
 
-Copy `config.example.yaml` to an untracked local `config.yaml` when you need a self-brand lens or knowledge-base integration. The Skill intentionally keeps these values outside its core instructions:
+Base research works without configuration. When you need a self-brand lens or knowledge-base integration, provide a private configuration path explicitly or set `SKILL_CONFIG_PATH` to that path. The packaged schema at `skills/contract-brand-research/references/config.example.yaml` is a field reference only; it is not a required runtime file and should not be copied as a second source of truth at the repository root. The Skill intentionally keeps these values outside its core instructions:
 
 | Configuration area | Purpose |
 |---|---|
@@ -70,6 +71,10 @@ Never commit credentials, private client data, or proprietary research. The comm
 ## Scope and non-goals
 
 The initial release is intentionally instruction-first. It does not bundle an MCP server, browser automation, a proprietary database, or automatic writing to an Obsidian vault. These are optional integrations that require explicit user approval and may be added later without changing the core research method.
+
+## Codex verification boundary
+
+Repository CI verifies package structure and deterministic behavior. It does not install the package into a live Codex environment or prove runtime trigger selection. Follow [Codex Installation and Verification](docs/codex-install-verification.md) in a new Codex session after installation, and record the outcome accurately.
 
 ## License
 

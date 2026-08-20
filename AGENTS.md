@@ -7,7 +7,7 @@ This repository contains one shared Agent Skill for evidence-backed contract-fur
 ## Source of truth
 
 - Keep workflow instructions in `skills/contract-brand-research/SKILL.md` and its referenced resources.
-- Keep personal or organization-specific values out of the Skill. Use `config.example.yaml`; local `config.yaml` is private and ignored.
+- Keep personal or organization-specific values out of the Skill. The only shared field schema is `skills/contract-brand-research/references/config.example.yaml`; a private configuration is optional, must be explicitly supplied or referenced by `SKILL_CONFIG_PATH`, and remains ignored by git.
 - Keep the two platform manifests thin. Do not duplicate the workflow in `.codex-plugin/` or `.claude-plugin/`.
 - `CLAUDE.md` is a minimal Claude Code pointer; this file is the repository-wide collaboration policy.
 
@@ -26,10 +26,11 @@ Before committing, run:
 
 ```bash
 python3 scripts/validate_repo.py
+python3 -m unittest discover -s skills/contract-brand-research/scripts/tests -p 'test_*.py' -v
 python3 skills/contract-brand-research/scripts/audit_knowledge_links.py <test-vault-path>
 ```
 
-Run the link audit only when a test vault is present. It is not required for a pure Skill-instruction change.
+Run the link audit only when a target or test vault is present. The unit-test suite is required whenever the audit script changes.
 
 ## Safety requirements
 

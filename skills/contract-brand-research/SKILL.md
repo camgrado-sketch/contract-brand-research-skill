@@ -11,7 +11,7 @@ Run a three-phase workflow:
 2. **Evidence-backed analysis** — collect, test, and explain evidence.
 3. **Optional knowledge sync** — convert approved findings into knowledge cards and a reviewable pull request.
 
-Use `config.yaml` when present. If it is absent, use `config.example.yaml` only as a schema and ask for any missing project-specific paths or mappings. Read only the reference file required by the current phase.
+Resolve optional configuration in this order: (1) a private configuration path explicitly provided by the user; (2) the path stored in `SKILL_CONFIG_PATH`; (3) no private configuration. When no private configuration is available, read `references/config.example.yaml` only as a field schema. Do not require configuration for base research, and do not rely on a bare current-directory path such as `config.yaml`. Ask for project-specific paths or mappings only when self-brand mapping or knowledge sync requires them. Read only the reference file required by the current phase.
 
 ## Operating principles
 
@@ -113,6 +113,7 @@ Before reporting completion, confirm:
 | D1–D6 dimension details | `references/dimensions.md` |
 | Fact labels, source grades, and data checks | `references/evidence-standards.md` |
 | Official-source discovery patterns | `references/source-playbook.md` |
+| Optional configuration field schema | `references/config.example.yaml` |
 | Research report skeleton | `templates/research-note.md` |
 | Evidence ledger skeleton | `templates/evidence-list.md` |
 | Pull-request body skeleton | `templates/pr-body.md` |
