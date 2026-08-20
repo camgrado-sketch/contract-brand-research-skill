@@ -44,6 +44,8 @@ REQUIRED_FILES = [
     SKILL / "scripts" / "extract_official_pdf.sh",
     SKILL / "scripts" / "audit_knowledge_links.py",
     SKILL / "scripts" / "tests" / "test_audit_knowledge_links.py",
+    SKILL / "scripts" / "tests" / "test_validate_repo.py",
+    SKILL / "scripts" / "tests" / "fixtures" / "openai_wrong_level.yaml",
     OPENAI_METADATA,
 ]
 
@@ -52,9 +54,11 @@ FIELD_RE = re.compile(r"^(?P<key>[A-Za-z][A-Za-z0-9_-]*):\s*(?P<value>.*)$")
 LOCAL_RESOURCE_RE = re.compile(r"`((?:references|templates|scripts)/[^`\s]+)`")
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
 SKILL_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+OPENAI_INTERFACE_FIELDS = {"display_name", "short_description", "default_prompt"}
 
 
 def parse_simple_yaml(text: str) -> dict[str, str]:
+    """Parse the flat SKILL.md frontmatter only; not used for nested YAML files."""
     values: dict[str, str] = {}
     for raw_line in text.splitlines():
         line = raw_line.strip()
@@ -63,6 +67,75 @@ def parse_simple_yaml(text: str) -> dict[str, str]:
         match = FIELD_RE.match(line)
         if match:
             values[match.group("key")] = match.group("value").strip().strip('"')
+    return values
+
+
+def parse_quoted_string(raw: str, line_number: int, failures: list[str]) -> str | None:
+    if not raw.startswith('"') or not raw.endswith('"'):
+        failures.append(f"openai.yaml line {line_number} must use a double-quoted string")
+        return None
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError:
+        failures.append(f"openai.yaml line {line_number} contains an invalid quoted string")
+        return None
+    if not isinstance(value, str) or not value:
+        failures.append(f"openai.yaml line {line_number} must contain a non-empty string")
+        return None
+    return value
+
+
+def parse_openai_interface(path: Path, failures: list[str]) -> dict[str, str]:
+    """Parse the supported OpenAI metadata structure with strict YAML hierarchy checks.
+
+    Expected shape:
+        interface:
+          display_name: "..."
+          short_description: "..."
+          default_prompt: "..."
+    """
+    if not path.is_file():
+        return {}
+
+    values: dict[str, str] = {}
+    saw_interface = False
+    for line_number, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        if not raw_line.strip() or raw_line.lstrip().startswith("#"):
+            continue
+        if raw_line == "interface:":
+            if saw_interface:
+                failures.append("openai.yaml contains more than one interface block")
+            saw_interface = True
+            continue
+        if raw_line.startswith(" "):
+            if not saw_interface:
+                failures.append(f"openai.yaml line {line_number} is nested before interface")
+                continue
+            if not raw_line.startswith("  ") or raw_line.startswith("   "):
+                failures.append(f"openai.yaml line {line_number} must be indented exactly two spaces under interface")
+                continue
+            match = FIELD_RE.match(raw_line[2:])
+            if not match:
+                failures.append(f"openai.yaml line {line_number} must be a key/value pair under interface")
+                continue
+            key = match.group("key")
+            if key not in OPENAI_INTERFACE_FIELDS:
+                failures.append(f"openai.yaml interface contains unsupported field: {key}")
+                continue
+            if key in values:
+                failures.append(f"openai.yaml interface repeats field: {key}")
+                continue
+            value = parse_quoted_string(match.group("value").strip(), line_number, failures)
+            if value is not None:
+                values[key] = value
+            continue
+        failures.append(f"openai.yaml line {line_number} must be the top-level interface key")
+
+    if not saw_interface:
+        failures.append("openai.yaml must contain a top-level interface block")
+    missing = OPENAI_INTERFACE_FIELDS - set(values)
+    if missing:
+        failures.append(f"openai.yaml interface missing fields: {', '.join(sorted(missing))}")
     return values
 
 
@@ -135,21 +208,20 @@ def validate_manifests(failures: list[str]) -> None:
             failures.append("Codex manifest skills must point to an existing directory")
 
 
-def validate_openai_metadata(failures: list[str]) -> None:
-    if not OPENAI_METADATA.is_file():
+def validate_openai_metadata(failures: list[str], metadata_path: Path = OPENAI_METADATA) -> None:
+    metadata = parse_openai_interface(metadata_path, failures)
+    if not metadata:
         return
-    metadata = parse_simple_yaml(OPENAI_METADATA.read_text(encoding="utf-8"))
-    for key in ("display_name", "short_description", "default_prompt"):
-        if not metadata.get(key):
-            failures.append(f"openai.yaml missing {key}")
 
     codex = load_json(CODEX_MANIFEST, failures) if CODEX_MANIFEST.is_file() else {}
     interface = codex.get("interface", {}) if isinstance(codex, dict) else {}
     if interface:
         if metadata.get("display_name") != interface.get("displayName"):
-            failures.append("openai.yaml display_name must match Codex interface.displayName")
+            failures.append("openai.yaml interface.display_name must match Codex interface.displayName")
         if metadata.get("short_description") != interface.get("shortDescription"):
-            failures.append("openai.yaml short_description must match Codex interface.shortDescription")
+            failures.append("openai.yaml interface.short_description must match Codex interface.shortDescription")
+    if "$contract-brand-research" not in metadata.get("default_prompt", ""):
+        failures.append("openai.yaml interface.default_prompt must include $contract-brand-research")
 
 
 def validate_git_hygiene(failures: list[str]) -> None:

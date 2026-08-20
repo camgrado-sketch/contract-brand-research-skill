@@ -87,7 +87,12 @@ def resolve_wikilink(
         return True
 
     if "/" in target or "\\" in target:
-        return resolve_path_target(target.replace("\\", "/"), vault, expect_markdown=not is_embed)
+        normalized_target = target.replace("\\", "/")
+        if resolve_path_target(normalized_target, vault, expect_markdown=not is_embed):
+            return True
+        if is_embed and not Path(normalized_target).suffix:
+            return resolve_path_target(normalized_target, vault, expect_markdown=True)
+        return False
 
     path_target = Path(target)
     if is_embed and path_target.suffix:

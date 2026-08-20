@@ -43,11 +43,12 @@ class WikiLinkAuditTests(unittest.TestCase):
                     "[[Note Name|Alias]]",
                     "[[Plain Note#Heading]]",
                     "![[assets/image.png]]",
+                    "![[folder/Note Name]]",
                     "![relative](assets/relative.png)",
                 ]
             )
         )
-        self.assertEqual(checked_wikilinks, 5)
+        self.assertEqual(checked_wikilinks, 6)
         self.assertEqual(checked_images, 1)
         self.assertEqual(missing, [])
 
@@ -66,6 +67,12 @@ class WikiLinkAuditTests(unittest.TestCase):
         _, _, missing = self.audit_note("![[assets/missing.png]]")
         self.assertEqual(len(missing), 1)
         self.assertEqual(missing[0].kind, "EMBED")
+
+    def test_missing_extensionless_markdown_embed_is_reported(self) -> None:
+        _, _, missing = self.audit_note("![[folder/Missing Note]]")
+        self.assertEqual(len(missing), 1)
+        self.assertEqual(missing[0].kind, "EMBED")
+        self.assertEqual(missing[0].target, "folder/Missing Note")
 
     def test_relative_image_missing_and_existing(self) -> None:
         _, _, missing = self.audit_note("![ok](assets/relative.png)\n![missing](assets/missing.png)")
