@@ -1,0 +1,3 @@
+display_name: "Contract Brand Research"
+short_description: "Evidence-backed competitor research for contract furniture."
+default_prompt: "Use $contract-brand-research to analyze a competitor."
