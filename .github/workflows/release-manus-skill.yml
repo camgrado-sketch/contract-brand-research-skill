@@ -1,0 +1,69 @@
+name: Release Manus Skill
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release-manus-skill:
+    name: Build and publish Manus Skill package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out tagged revision
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Confirm the tag belongs to main
+        run: |
+          git fetch origin main --quiet
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
+      - name: Confirm tag and manifest versions match
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          tag = os.environ["TAG_NAME"]
+          version = json.loads(Path(".codex-plugin/plugin.json").read_text(encoding="utf-8"))["version"]
+          expected = f"v{version}"
+          if tag != expected:
+              raise SystemExit(f"Tag {tag!r} must equal manifest version tag {expected!r}")
+          print(f"PASS: tag {tag} matches manifest version {version}")
+          PY
+
+      - name: Validate repository and package tests
+        run: |
+          python3 scripts/validate_repo.py
+          python3 -m unittest discover -s skills/contract-brand-research/scripts/tests -p 'test_*.py' -v
+          python3 -m unittest discover -s scripts/tests -p 'test_*.py' -v
+          python3 -m py_compile scripts/validate_repo.py scripts/package_manus_skill.py
+          python3 -m py_compile skills/contract-brand-research/scripts/audit_knowledge_links.py
+          bash -n skills/contract-brand-research/scripts/extract_official_pdf.sh
+
+      - name: Build and validate Manus release archive
+        run: |
+          python3 scripts/package_manus_skill.py
+          python3 scripts/package_manus_skill.py --check "dist/contract-brand-research-manus-v${GITHUB_REF_NAME#v}.skill"
+
+      - name: Publish GitHub Release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/contract-brand-research-manus-v${GITHUB_REF_NAME#v}.skill" \
+            --title "Contract Brand Research Skill ${GITHUB_REF_NAME}" \
+            --generate-notes

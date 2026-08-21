@@ -6,6 +6,9 @@ research-output/
 *.pdf
 *.txt
 
+# Generated release artifacts
+dist/
+
 # Python artifacts
 __pycache__/
 *.py[cod]

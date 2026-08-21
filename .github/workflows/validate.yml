@@ -29,11 +29,20 @@ jobs:
       - name: Run WikiLink audit tests
         run: python3 -m unittest discover -s skills/contract-brand-research/scripts/tests -p 'test_*.py' -v
 
+      - name: Run Manus release package tests
+        run: python3 -m unittest discover -s scripts/tests -p 'test_*.py' -v
+
       - name: Compile Python helpers
         run: |
           python3 -m py_compile scripts/validate_repo.py
+          python3 -m py_compile scripts/package_manus_skill.py
           python3 -m py_compile skills/contract-brand-research/scripts/audit_knowledge_links.py
           python3 -m py_compile skills/contract-brand-research/scripts/tests/test_audit_knowledge_links.py
+
+      - name: Build and validate Manus release package
+        run: |
+          python3 scripts/package_manus_skill.py --output /tmp/contract-brand-research-manus.skill
+          python3 scripts/package_manus_skill.py --check /tmp/contract-brand-research-manus.skill
 
       - name: Check shell helper syntax
         run: bash -n skills/contract-brand-research/scripts/extract_official_pdf.sh
