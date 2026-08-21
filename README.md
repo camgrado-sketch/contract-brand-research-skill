@@ -4,65 +4,65 @@
 
 This repository packages a single reusable Skill that moves through three controlled stages: **clarify the user's real question**, **research and explain the mechanism with evidence**, and **optionally derive reviewable knowledge-base artifacts**. It is designed first for Manus and Codex, with low-cost Claude Code compatibility.
 
-## How to call the Skill
+## 如何调用这个 Skill
 
-### Explicit invocation
+### 方式一：显式调用
 
-For the most reliable invocation in Manus, place `$contract-brand-research` at the beginning of the request:
-
-```text
-$contract-brand-research
-Please analyze Brunner's business model, focusing on why it can sustain premium pricing while entering a large volume of public-sector and contract projects. Cover brand positioning, product platform, sales channels, project and customer composition, and premium logic.
-```
-
-The explicit invocation name is also declared in `skills/contract-brand-research/agents/openai.yaml`.
-
-### Natural-language invocation
-
-The Skill can also be triggered by a request that clearly concerns contract-furniture competitor research, including brand positioning, product systems, CMF, pricing or premium logic, sales networks, project cases, customer structure, or strategic implications:
-
-```text
-Please research Arper's positioning in high-end office public areas, including its product system, CMF characteristics, sales model, and project customers. Explain the implications for GRADO's product development. Before searching, ask a few key questions to confirm my research intent.
-```
-
-### Phase-specific invocation
-
-To run only the intent-alignment stage, state the boundary explicitly:
-
-```text
-Use Contract Brand Research and execute only Phase 1: Intent Alignment. I have a vague question about the 2026 development direction for modular upholstered sofas. Ask one question at a time, and do not search the web, inspect images, or provide a substantive conclusion.
-```
-
-After the Alignment Brief has been confirmed, continue with evidence-backed analysis:
-
-```text
-The research scope is confirmed. Continue with $contract-brand-research Phase 2: Evidence-backed Analysis. Prioritize official websites, catalogues, annual reports, and project pages. Clearly separate Fact, Analysis, and Unverified claims.
-```
-
-### Complete request template
-
-Use the following template when starting a full research task:
+在 Manus 中，最稳定的方式是在请求开头写出 `$contract-brand-research`：
 
 ```text
 $contract-brand-research
-
-Research subject:
-Research topic:
-Core question or contradiction:
-Current working assumption:
-Reference frame or comparison scope:
-Geography and time period:
-Priority dimensions:
-Expected deliverable:
-Need Obsidian knowledge sync: Yes / No
-
-Additional constraints:
-- Ask one clarification question at a time before researching.
-- Do not search, inspect images, or provide a substantive answer until the Alignment Brief is confirmed, unless I explicitly ask you to skip clarification.
-- Prioritize official primary sources and label Fact, Analysis, and Unverified information separately.
+请分析 Brunner 的商业模式，重点解释它为什么能够以较高价格进入大量公共工程与 Contract 项目。请覆盖品牌定位、产品平台、销售渠道、项目与客户构成，以及其溢价逻辑。
 ```
 
-The expected sequence is: ask one clarification question at a time; prepare an Alignment Brief covering the core question, assumption, reference frame, decision use, scope, and priority dimensions; wait for confirmation or an explicit skip; then conduct evidence-backed research; and only perform knowledge-base synchronization after the user explicitly requests and approves the mapping.
+该显式调用名也写入了 `skills/contract-brand-research/agents/openai.yaml`。
+
+### 方式二：自然语言调用
+
+当请求明确涉及 Contract 家具竞品研究时，也可以通过自然语言触发，包括品牌定位、产品体系、CMF、定价与溢价逻辑、销售网络、项目案例、客户结构或战略启示等主题：
+
+```text
+请研究 Arper 在高端办公公共区域中的品牌定位，包括产品体系、CMF 特征、销售模式和项目客户构成，并分析它对 GRADO 产品研发的启示。在开始搜索前，请先通过几个关键问题确认我的研究意图。
+```
+
+### 方式三：指定阶段调用
+
+如果只希望执行前期的意图对齐阶段，可以明确限定范围：
+
+```text
+请使用 Contract Brand Research，只执行第一阶段“Intent Alignment（意图对齐）”。我目前有一个关于 2026 年模块化软体沙发研发方向的模糊问题。请一次只问我一个问题，在对齐完成前不要搜索网络、识别图片或直接给出实质性结论。
+```
+
+在 Alignment Brief（对齐简报）确认后，再进入证据分析阶段：
+
+```text
+研究范围已经确认。请继续使用 $contract-brand-research 进入第二阶段“Evidence-backed Analysis（基于证据的分析）”。优先使用品牌官网、官方图册、年度报告和项目页面，并严格区分 Fact、Analysis 和 Unverified 信息。
+```
+
+### 完整调用模板
+
+开始一次完整竞品研究时，可以直接复制并填写以下模板：
+
+```text
+$contract-brand-research
+
+研究对象：
+研究课题：
+核心问题或矛盾：
+当前工作假设：
+参考框架或对标范围：
+地理范围与时间范围：
+重点分析维度：
+预期交付成果：
+是否需要同步至 Obsidian：是 / 否
+
+补充约束：
+- 研究开始前一次只提出一个澄清问题。
+- 在 Alignment Brief 确认前，不要搜索网络、识别图片或提供实质性结论；除非我明确要求跳过澄清阶段。
+- 优先使用官方一手来源，并分别标注 Fact、Analysis 和 Unverified 信息。
+```
+
+标准执行顺序是：首先一次只提出一个澄清问题；然后形成包含核心问题、当前假设、参考框架、决策用途、研究范围和重点维度的 Alignment Brief；等待用户确认或明确跳过；确认后再开展基于证据的研究；只有在用户明确要求并批准映射方案后，才进行知识库同步。
 
 ## Why this Skill exists
 
