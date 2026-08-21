@@ -105,12 +105,24 @@ $contract-brand-research
 
 ### Manus
 
-**不要把仓库首页 URL 或 GitHub 自动生成的源码 ZIP 作为 Manus 安装包。** 仓库源码 ZIP 的根目录通常包含仓库名称，`SKILL.md` 位于 `skills/contract-brand-research/` 等多层路径中；这不一定符合 Manus 导入器对 Skill 根目录的识别规则。
+#### 首选方式：从 GitHub 导入
 
-请优先从 [GitHub Releases](https://github.com/camgrado-sketch/contract-brand-research-skill/releases) 下载版本固定的 `contract-brand-research-manus-v<版本>.skill` 发布资产。该文件由 CI 从唯一源码目录自动生成，压缩包内的首层目录固定为：
+Manus 的“从 GitHub 导入”需要一个精确到**分支与 Skill 子目录**的 GitHub Tree URL，格式如下：
 
 ```text
-contract-brand-research/
+https://github.com/{owner}/{repo}/tree/{branch}/{path}
+```
+
+本 Skill 已在 Manus 中完成真实导入验证。请直接使用以下地址：
+
+```text
+https://github.com/camgrado-sketch/contract-brand-research-skill/tree/main/skills/contract-brand-research
+```
+
+该链接指向 `main` 分支中以 `SKILL.md` 为根入口的 Skill 目录：
+
+```text
+skills/contract-brand-research/
 ├── SKILL.md
 ├── agents/
 ├── references/
@@ -118,11 +130,17 @@ contract-brand-research/
 └── templates/
 ```
 
-下载后，将这个 `.skill` 文件上传到 Manus 的 Skill 导入界面，并选择“添加到我的 Skills”。如果 Manus 的当前前端不接受 `.skill` 扩展名，请将文件扩展名改为 `.zip` 后上传；文件内容和目录结构不需要改变。
+在 Manus 的“添加 Skill”页面选择“从 GitHub 导入”，粘贴上述完整 URL 并点击导入即可。导入成功后，新建一个会话，再使用 `$contract-brand-research` 进行验证。
 
-如果你的 Manus 工作区提供“通过 URL 同步”功能，应使用**固定版本的 GitHub Release 资产直链**，而不是仓库首页或 `main.zip`。是否支持 URL 直链取决于 Manus 当前前端能力：若 URL 导入器仍提示无法识别，请下载同一 Release 资产后改用本地上传。这不表示 Skill 内容错误，而是远程 URL 导入器未支持该资产类型或认证方式。
+**不要使用仓库首页 URL、GitHub 自动生成的源码 ZIP、`main.zip` 或 GitHub Release 资产 URL 进行“从 GitHub 导入”。** 这些地址不符合 Manus 对 GitHub Tree URL 的格式要求。
 
-不可将单独的 `SKILL.md` 当作完整发布包；它必须与 `references/`、`templates/` 和 `scripts/` 同时存在。安装完成后，请新建一个会话，并分别测试显式调用与自然语言触发。测试时应确认 Skill 会先提出澄清问题，而不是在研究范围未确认前直接搜索网络。
+#### 备用方式：下载 Release 包后本地上传
+
+如 GitHub 导入入口暂时不可用，可从 [GitHub Releases](https://github.com/camgrado-sketch/contract-brand-research-skill/releases) 下载版本固定的 `contract-brand-research-manus-v<版本>.skill` 发布资产，再通过 Manus 的本地文件导入功能上传。
+
+该文件由 CI 从唯一源码目录自动生成，压缩包内的首层目录固定为 `contract-brand-research/`，并保留 `SKILL.md`、`agents/`、`references/`、`scripts/` 与 `templates/`。如果当前前端不接受 `.skill` 扩展名，可将文件扩展名改为 `.zip` 后上传；文件内容和目录结构不需要改变。
+
+无论采用哪种方式，都不可只导入单独的 `SKILL.md`；运行时必须同时保留 `references/`、`templates/` 和 `scripts/`。安装完成后，请新建一个会话，并分别测试显式调用与自然语言触发。正确的第一步应是先提出澄清问题，而不是在研究范围未确认前直接搜索网络。
 
 ### Codex
 
