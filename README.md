@@ -4,6 +4,66 @@
 
 This repository packages a single reusable Skill that moves through three controlled stages: **clarify the user's real question**, **research and explain the mechanism with evidence**, and **optionally derive reviewable knowledge-base artifacts**. It is designed first for Manus and Codex, with low-cost Claude Code compatibility.
 
+## 如何调用这个 Skill
+
+### 方式一：显式调用
+
+在 Manus 中，最稳定的方式是在请求开头写出 `$contract-brand-research`：
+
+```text
+$contract-brand-research
+请分析 Brunner 的商业模式，重点解释它为什么能够以较高价格进入大量公共工程与 Contract 项目。请覆盖品牌定位、产品平台、销售渠道、项目与客户构成，以及其溢价逻辑。
+```
+
+该显式调用名也写入了 `skills/contract-brand-research/agents/openai.yaml`。
+
+### 方式二：自然语言调用
+
+当请求明确涉及 Contract 家具竞品研究时，也可以通过自然语言触发，包括品牌定位、产品体系、CMF、定价与溢价逻辑、销售网络、项目案例、客户结构或战略启示等主题：
+
+```text
+请研究 Arper 在高端办公公共区域中的品牌定位，包括产品体系、CMF 特征、销售模式和项目客户构成，并分析它对 GRADO 产品研发的启示。在开始搜索前，请先通过几个关键问题确认我的研究意图。
+```
+
+### 方式三：指定阶段调用
+
+如果只希望执行前期的意图对齐阶段，可以明确限定范围：
+
+```text
+请使用 Contract Brand Research，只执行第一阶段“Intent Alignment（意图对齐）”。我目前有一个关于 2026 年模块化软体沙发研发方向的模糊问题。请一次只问我一个问题，在对齐完成前不要搜索网络、识别图片或直接给出实质性结论。
+```
+
+在 Alignment Brief（对齐简报）确认后，再进入证据分析阶段：
+
+```text
+研究范围已经确认。请继续使用 $contract-brand-research 进入第二阶段“Evidence-backed Analysis（基于证据的分析）”。优先使用品牌官网、官方图册、年度报告和项目页面，并严格区分 Fact、Analysis 和 Unverified 信息。
+```
+
+### 完整调用模板
+
+开始一次完整竞品研究时，可以直接复制并填写以下模板：
+
+```text
+$contract-brand-research
+
+研究对象：
+研究课题：
+核心问题或矛盾：
+当前工作假设：
+参考框架或对标范围：
+地理范围与时间范围：
+重点分析维度：
+预期交付成果：
+是否需要同步至 Obsidian：是 / 否
+
+补充约束：
+- 研究开始前一次只提出一个澄清问题。
+- 在 Alignment Brief 确认前，不要搜索网络、识别图片或提供实质性结论；除非我明确要求跳过澄清阶段。
+- 优先使用官方一手来源，并分别标注 Fact、Analysis 和 Unverified 信息。
+```
+
+标准执行顺序是：首先一次只提出一个澄清问题；然后形成包含核心问题、当前假设、参考框架、决策用途、研究范围和重点维度的 Alignment Brief；等待用户确认或明确跳过；确认后再开展基于证据的研究；只有在用户明确要求并批准映射方案后，才进行知识库同步。
+
 ## Why this Skill exists
 
 Generic competitor reports usually start from a broad framework and end by repeating brand marketing language. This Skill starts instead from a user's uncertainty, contradiction, or decision. It requires the agent to test assumptions against official evidence and to visibly distinguish **Fact**, **Analysis**, and **Unverified** statements.
