@@ -4,6 +4,66 @@
 
 This repository packages a single reusable Skill that moves through three controlled stages: **clarify the user's real question**, **research and explain the mechanism with evidence**, and **optionally derive reviewable knowledge-base artifacts**. It is designed first for Manus and Codex, with low-cost Claude Code compatibility.
 
+## How to call the Skill
+
+### Explicit invocation
+
+For the most reliable invocation in Manus, place `$contract-brand-research` at the beginning of the request:
+
+```text
+$contract-brand-research
+Please analyze Brunner's business model, focusing on why it can sustain premium pricing while entering a large volume of public-sector and contract projects. Cover brand positioning, product platform, sales channels, project and customer composition, and premium logic.
+```
+
+The explicit invocation name is also declared in `skills/contract-brand-research/agents/openai.yaml`.
+
+### Natural-language invocation
+
+The Skill can also be triggered by a request that clearly concerns contract-furniture competitor research, including brand positioning, product systems, CMF, pricing or premium logic, sales networks, project cases, customer structure, or strategic implications:
+
+```text
+Please research Arper's positioning in high-end office public areas, including its product system, CMF characteristics, sales model, and project customers. Explain the implications for GRADO's product development. Before searching, ask a few key questions to confirm my research intent.
+```
+
+### Phase-specific invocation
+
+To run only the intent-alignment stage, state the boundary explicitly:
+
+```text
+Use Contract Brand Research and execute only Phase 1: Intent Alignment. I have a vague question about the 2026 development direction for modular upholstered sofas. Ask one question at a time, and do not search the web, inspect images, or provide a substantive conclusion.
+```
+
+After the Alignment Brief has been confirmed, continue with evidence-backed analysis:
+
+```text
+The research scope is confirmed. Continue with $contract-brand-research Phase 2: Evidence-backed Analysis. Prioritize official websites, catalogues, annual reports, and project pages. Clearly separate Fact, Analysis, and Unverified claims.
+```
+
+### Complete request template
+
+Use the following template when starting a full research task:
+
+```text
+$contract-brand-research
+
+Research subject:
+Research topic:
+Core question or contradiction:
+Current working assumption:
+Reference frame or comparison scope:
+Geography and time period:
+Priority dimensions:
+Expected deliverable:
+Need Obsidian knowledge sync: Yes / No
+
+Additional constraints:
+- Ask one clarification question at a time before researching.
+- Do not search, inspect images, or provide a substantive answer until the Alignment Brief is confirmed, unless I explicitly ask you to skip clarification.
+- Prioritize official primary sources and label Fact, Analysis, and Unverified information separately.
+```
+
+The expected sequence is: ask one clarification question at a time; prepare an Alignment Brief covering the core question, assumption, reference frame, decision use, scope, and priority dimensions; wait for confirmation or an explicit skip; then conduct evidence-backed research; and only perform knowledge-base synchronization after the user explicitly requests and approves the mapping.
+
 ## Why this Skill exists
 
 Generic competitor reports usually start from a broad framework and end by repeating brand marketing language. This Skill starts instead from a user's uncertainty, contradiction, or decision. It requires the agent to test assumptions against official evidence and to visibly distinguish **Fact**, **Analysis**, and **Unverified** statements.
