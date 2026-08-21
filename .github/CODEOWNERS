@@ -1,0 +1,5 @@
+# Advisory ownership map. Enforcement depends on the repository plan and branch rules.
+* @camgrado
+/skills/ @camgrado
+/.codex-plugin/ @camgrado
+/.claude-plugin/ @camgrado

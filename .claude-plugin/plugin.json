@@ -1,0 +1,11 @@
+{
+  "name": "contract-brand-research",
+  "version": "0.1.0",
+  "description": "Evidence-backed competitor brand research for contract furniture and B2B design.",
+  "author": {
+    "name": "Cam Grado"
+  },
+  "homepage": "https://github.com/camgrado-sketch/contract-brand-research-skill",
+  "repository": "https://github.com/camgrado-sketch/contract-brand-research-skill",
+  "license": "MIT"
+}

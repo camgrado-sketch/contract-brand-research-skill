@@ -1,0 +1,42 @@
+name: Validate Skill Repository
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate packaged resources and platform metadata
+        run: python3 scripts/validate_repo.py
+
+      - name: Run WikiLink audit tests
+        run: python3 -m unittest discover -s skills/contract-brand-research/scripts/tests -p 'test_*.py' -v
+
+      - name: Compile Python helpers
+        run: |
+          python3 -m py_compile scripts/validate_repo.py
+          python3 -m py_compile skills/contract-brand-research/scripts/audit_knowledge_links.py
+          python3 -m py_compile skills/contract-brand-research/scripts/tests/test_audit_knowledge_links.py
+
+      - name: Check shell helper syntax
+        run: bash -n skills/contract-brand-research/scripts/extract_official_pdf.sh
+
+      - name: Check committed diff for whitespace errors
+        run: git diff --check "$(git merge-base HEAD origin/${{ github.event.repository.default_branch }})" HEAD

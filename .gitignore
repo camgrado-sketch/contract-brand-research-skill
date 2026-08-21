@@ -1,0 +1,17 @@
+# Private, organization-specific configuration
+config.yaml
+
+# Local research and extraction artifacts
+research-output/
+*.pdf
+*.txt
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+.venv/
+
+# Editor and operating-system artifacts
+.DS_Store
+.vscode/
+.idea/

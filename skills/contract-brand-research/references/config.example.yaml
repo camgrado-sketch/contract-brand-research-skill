@@ -1,0 +1,34 @@
+# Field schema only. This file is packaged with the Skill and is not a required runtime config.
+# A private configuration may be supplied explicitly by the user or via SKILL_CONFIG_PATH.
+# Do not copy secrets, client data, or proprietary research into a shared configuration.
+
+self_brand:
+  name: ""
+  positioning: ""
+  strategic_questions: []
+
+benchmark_brands: []
+
+research:
+  default_geography: "global"
+  official_top_up_page_limit: 5
+  require_alignment_confirmation: true
+  source_priority: ["A", "B", "C"]
+
+knowledge_sync:
+  enabled: false
+  repository: ""
+  integration_branch: "develop"
+  review_branch_prefix: "note/"
+  formal_note_path: ""
+  research_note_path: ""
+  index_path: ""
+  card_mapping:
+    positioning_card: ""
+    expression_card: ""
+    evidence_card: ""
+
+review:
+  require_user_mapping_confirmation: true
+  require_pull_request: true
+  pr_base_branch: "develop"
