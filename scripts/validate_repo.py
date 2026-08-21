@@ -17,6 +17,8 @@ SKILL = ROOT / "skills" / "contract-brand-research"
 CODEX_MANIFEST = ROOT / ".codex-plugin" / "plugin.json"
 CLAUDE_MANIFEST = ROOT / ".claude-plugin" / "plugin.json"
 OPENAI_METADATA = SKILL / "agents" / "openai.yaml"
+MANUS_PACKAGE_SCRIPT = ROOT / "scripts" / "package_manus_skill.py"
+MANUS_PACKAGE_TEST = ROOT / "scripts" / "tests" / "test_package_manus_skill.py"
 
 REQUIRED_FILES = [
     ROOT / "README.md",
@@ -27,6 +29,7 @@ REQUIRED_FILES = [
     ROOT / "LICENSE",
     ROOT / ".gitignore",
     ROOT / ".github" / "workflows" / "validate.yml",
+    ROOT / ".github" / "workflows" / "release-manus-skill.yml",
     ROOT / "docs" / "codex-install-verification.md",
     CODEX_MANIFEST,
     CLAUDE_MANIFEST,
@@ -47,6 +50,8 @@ REQUIRED_FILES = [
     SKILL / "scripts" / "tests" / "test_validate_repo.py",
     SKILL / "scripts" / "tests" / "fixtures" / "openai_wrong_level.yaml",
     OPENAI_METADATA,
+    MANUS_PACKAGE_SCRIPT,
+    MANUS_PACKAGE_TEST,
 ]
 
 FRONTMATTER_RE = re.compile(r"\A---\n(?P<body>.*?)\n---\n", re.DOTALL)
@@ -190,6 +195,9 @@ def validate_manifests(failures: list[str]) -> None:
         if data.get("version") and not SEMVER_RE.fullmatch(data["version"]):
             failures.append(f"{label} manifest version is not semantic versioning")
 
+    if codex and claude and codex.get("version") != claude.get("version"):
+        failures.append("Codex and Claude manifests must declare the same release version")
+
     if codex:
         author = codex.get("author")
         interface = codex.get("interface")
@@ -224,6 +232,15 @@ def validate_openai_metadata(failures: list[str], metadata_path: Path = OPENAI_M
         failures.append("openai.yaml interface.default_prompt must include $contract-brand-research")
 
 
+def validate_manus_release_packaging(failures: list[str]) -> None:
+    if not MANUS_PACKAGE_SCRIPT.is_file():
+        return
+    script = MANUS_PACKAGE_SCRIPT.read_text(encoding="utf-8")
+    for marker in ("SKILL.md", "zipfile.ZipFile", "validate_archive", "contract-brand-research"):
+        if marker not in script:
+            failures.append(f"Manus package builder is missing required marker: {marker}")
+
+
 def validate_git_hygiene(failures: list[str]) -> None:
     if (ROOT / "config.example.yaml").exists():
         failures.append("root config.example.yaml must be removed; use Skill-packaged references/config.example.yaml")
@@ -249,6 +266,7 @@ def main() -> int:
     validate_skill_frontmatter(failures)
     validate_manifests(failures)
     validate_openai_metadata(failures)
+    validate_manus_release_packaging(failures)
     validate_git_hygiene(failures)
 
     if failures:
