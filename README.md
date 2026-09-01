@@ -154,6 +154,17 @@ skills/contract-brand-research/
 
 在本地项目开发期间，建议通过符号链接将共享 Skill 暴露到 `.claude/skills/`，而不是复制出第二份内容。具体方式请参考 [Claude Code Skills 文档](https://code.claude.com/docs/en/skills)。
 
+## Obsidian DBS 适配 (V2.0)
+
+本 Skill 现已内置对 **Design Business Support (DBS)** 知识库规范的可选适配层。当目标仓库声明 `domain: design-business-support` 时，Phase 3 同步将自动切换为 DBS 模式：
+
+- **候选路由 (Candidate Routing)**：自动执行 `应进入` / `需补充依据` / `不适用` 的三分判别，并写入 `research_candidate_*` 字段以进入知识库分诊队列。
+- **元数据对齐**：强制补齐 `domain`、`module`、`evidence_status` 等关键元数据。
+- **来源与标签门禁**：强制执行 YAML 列表格式的 `source` 属性，并限制 AI 只能建议受控命名空间的标签（状态设为 `pending`）。
+- **自动化审计**：提供 `scripts/audit_dbs_sync.py` 用于在 PR 前验证同步内容是否符合 DBS 规范。
+
+详细规则请参阅 `skills/contract-brand-research/references/phase3-knowledge-sync.md`。
+
 ## 配置
 
 基础竞品研究不依赖配置文件。如果需要加入自有品牌视角或知识库集成，请显式提供私有配置路径，或者设置 `SKILL_CONFIG_PATH` 环境变量。`skills/contract-brand-research/references/config.example.yaml` 只是字段结构参考，并不是必需的运行时文件，也不应被复制为仓库根目录下的第二份配置源。
