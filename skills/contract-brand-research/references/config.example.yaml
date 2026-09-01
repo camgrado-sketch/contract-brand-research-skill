@@ -18,11 +18,22 @@ research:
 knowledge_sync:
   enabled: false
   repository: ""
-  integration_branch: "develop"
+  # Mode: "general" or "obsidian-dbs"
+  mode: "general"
+  integration_branch: "main"
   review_branch_prefix: "note/"
-  formal_note_path: ""
-  research_note_path: ""
-  index_path: ""
+
+  # Paths for Obsidian DBS Mode (relative to root)
+  research_note_root: "01_Knowledge/Design-Business-Support/M1-Foundation/Product-Technical/Research-Notes"
+  formal_card_root: "01_Knowledge/Design-Business-Support/M1-Foundation/Brand-Expression"
+  index_root: "05_Indexes"
+
+  # Metadata defaults for Obsidian DBS Mode
+  dbs_metadata:
+    domain: "design-business-support"
+    module: "foundation"
+    evidence_status: "to-validate"
+    tag_review_status: "pending"
   card_mapping:
     positioning_card: ""
     expression_card: ""
@@ -31,4 +42,4 @@ knowledge_sync:
 review:
   require_user_mapping_confirmation: true
   require_pull_request: true
-  pr_base_branch: "develop"
+  pr_base_branch: "main"

@@ -82,6 +82,11 @@ Run only when the user asks to archive, update, or synchronize the analysis into
 
 Read `references/phase3-knowledge-sync.md`.
 
+### Mode Selection
+
+1.  **General Mode**: Use for generic Markdown repositories or non-DBS Obsidian vaults.
+2.  **Obsidian DBS Mode**: Use ONLY for repositories declaring `domain: design-business-support`. MUST read and strictly follow the target vault's `AGENTS.md`, `KNOWLEDGE_RULES.md`, and `_meta/technical-specs/DBS-BRAND-RESEARCH-CANDIDATE-ROUTING.md`.
+
 ### Required workflow
 
 1. Inspect the target repository rules, templates, index structure, and existing notes before proposing changes.
@@ -92,6 +97,14 @@ Read `references/phase3-knowledge-sync.md`.
 6. Use stable filename links, repository-relative assets, and bidirectional links between research notes and derived cards.
 7. Validate YAML, Markdown, links, image paths, and the changed-file set.
 8. Create a structured Markdown pull request from the configured integration branch. Never push directly to the protected release branch.
+
+### Obsidian DBS Rules (High-Level)
+
+- **Candidate Routing**: Perform a 3-way decision (应进入 / 需补充依据 / 不适用). Write `research_candidate_*` fields ONLY for positive matches. NEVER auto-update formal `research_*` fields or human-review dates.
+- **Mapping**: Research notes -> `Research-Notes`; Brand cards -> `M1-Foundation/Brand-Expression`.
+- **Branching**: Branch from `main`, PR directly to `main`.
+- **Tags**: Use ONLY controlled namespaces (e.g., `brand/`, `cmf/`). AI suggests `pending` or `needs-review` status only.
+- **Evidence**: Use direct-to-source links `[Name](URL) [n]` in the body.
 
 ## Completion checklist
 

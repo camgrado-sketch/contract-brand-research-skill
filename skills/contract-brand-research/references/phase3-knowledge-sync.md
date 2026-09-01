@@ -31,12 +31,29 @@ Do not call a research synthesis an external primary source. Preserve the extern
 
 Map analysis content to existing user templates. Do not create a new taxonomy simply because a field is missing.
 
+### General Mapping
+
 | Analysis content | Likely output | Mapping rule |
 |---|---|---|
 | Positioning, product system, applications, strengths, boundaries | Brand positioning card | This is the main navigation entry. |
 | Short, medium, and full verbal descriptions | Brand expression card | Distinguish official language from research wording. |
 | Scale facts, channels, project evidence, source links | Evidence or brand asset card | Preserve source grade and reporting period. |
 | Full reasoning, source ledger, calculations, caveats | Research note | Link to every derived card. |
+
+### Obsidian DBS Mode Mapping (V2.0)
+
+| Analysis content | DBS Template | Target Path (M1-Foundation) |
+|---|---|---|
+| Full reasoning, source ledger, caveats | `设计师研究底稿` | `Product-Technical/Research-Notes/` |
+| Positioning, market level, gaps | `品牌定位卡` | `Brand-Expression/` |
+| Multi-length verbal descriptions | `品牌表达模块卡` | `Brand-Expression/` |
+| Assets, permissions, source links | `品牌证据与资产卡` | `Brand-Expression/` |
+| Product series & technical facts | `产品｜01 系列主卡` | `Product-Technical/` |
+
+**DBS Metadata Requirements:**
+- MUST include `domain: design-business-support` and `module: foundation`.
+- MUST set `evidence_status: to-validate`.
+- MUST follow the `research_candidate_*` routing protocol for new or substantively updated notes.
 
 ## Official top-up pass
 
@@ -58,6 +75,19 @@ This pass must not use trade media and must not expand into a second research pr
 - Put images and charts in repository-relative locations. Never leave local absolute file paths.
 - Link main card → expression card, evidence card, and research note; link every research note → all derived cards.
 - Add only a minimal entry to an existing index or MOC. Do not add an index hierarchy without approval.
+
+### Obsidian DBS Specific Rules
+
+1.  **Source List Strategy**:
+    - `source` MUST be a YAML list if more than one source exists.
+    - Each `[[Internal Note]]` or external URL MUST be a separate list item.
+    - NEVER mix WikiLinks and descriptive text in a single scalar `source` value.
+2.  **Tag Suggestions**:
+    - SUGGEST tags ONLY from controlled namespaces: `mkt/`, `brand/`, `cmf/`, `space/`, `biz/`.
+    - Set `tag_review_status` ONLY to `pending` or `needs-review`. NEVER set to `approved`.
+3.  **In-body Evidence Links**:
+    - Use the format `[Name](URL) [n]` for the first occurrence of an official case, project, or showroom in the body.
+    - Ensure `[n]` corresponds to the same URL in the References/Evidence section.
 
 ## Pull-request discipline
 
