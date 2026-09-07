@@ -132,3 +132,7 @@ Before reporting completion, confirm:
 | Pull-request body skeleton | `templates/pr-body.md` |
 
 Use the bundled scripts only for deterministic validation or extraction. Inspect their inputs and outputs before use.
+
+## 网站访问受限与素材补充
+
+调研图册、图片、技术资料或处理素材访问缺口时，读取 [网站访问受限与素材补充](references/source-access-and-assets.md)。采用官方优先、有限重试、继续可访问部分和最小用户补充清单；区分原始发布者与取得方式，沿用现有证据标准及选图确认要求。
